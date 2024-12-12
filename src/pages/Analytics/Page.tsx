@@ -1,122 +1,116 @@
-// src/App.tsx
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../../app/store';
 import { Line, Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import 'chart.js/auto'; // Auto-register Chart.js components
-import { format } from 'date-fns';
 
 // Register necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
 
-const mockUsers = [
-  { id: 1, status: 'active', region: 'North America', registrationDate: '2024-01-15' },
-  { id: 2, status: 'inactive', region: 'Europe', registrationDate: '2024-02-01' },
-  { id: 3, status: 'active', region: 'North America', registrationDate: '2024-03-10' },
-  { id: 4, status: 'deleted', region: 'Asia', registrationDate: '2024-04-05' },
-  { id: 5, status: 'active', region: 'Europe', registrationDate: '2024-05-22' },
-  { id: 6, status: 'inactive', region: 'Africa', registrationDate: '2024-06-14' },
-];
+// Import actions
+import { fetchOverview, fetchRegistrationTrend, fetchUserStatus, fetchRegionDistribution } from '../../features/Analytics/analyticsSlice';
+
+// Define the slice state types
+interface Overview {
+  totalUsers: number;
+  deletedUsers: number;
+}
+
+interface UserStatus {
+  active: number;
+}
+
+interface RegistrationTrendItem {
+  month: string;
+  registrations: number;
+}
+
+interface RegionDistributionItem {
+  region: string;
+  count: number;
+}
+
+interface AnalyticsState {
+  overview: Overview | null;
+  registrationTrend: RegistrationTrendItem[];
+  userStatus: UserStatus | null;
+  regionDistribution: RegionDistributionItem[];
+  loading: boolean;
+  error: string | null;
+}
 
 const AnalyticsDashboard: React.FC = () => {
-  // Filter States
-  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
-    start: '2024-01-01',
-    end: '2024-12-31',
-  });
+  const dispatch = useDispatch<AppDispatch>();
+  const { overview, registrationTrend, userStatus, regionDistribution, loading, error } = useSelector((state: { analytics: AnalyticsState }) => state.analytics);
+
+  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '2024-01-01', end: '2024-12-31' });
   const [regionFilter, setRegionFilter] = useState('All');
 
-  // Calculate Total, Active, and Deleted Users
-  const totalUsers = mockUsers.length;
-  const activeUsers = mockUsers.filter(user => user.status === 'active').length;
-  const deletedUsers = mockUsers.filter(user => user.status === 'deleted').length;
+  // Dispatch fetch actions on component mount
+  useEffect(() => {
+    dispatch(fetchOverview());
+    dispatch(fetchRegistrationTrend());
+    dispatch(fetchUserStatus());
+    dispatch(fetchRegionDistribution());
+  }, [dispatch]);
 
-  // Registration Trend: Line Chart Data
-  const registrationTrend = mockUsers.reduce((acc, user) => {
-    const month = format(new Date(user.registrationDate), 'yyyy-MM');
-    acc[month] = (acc[month] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  
+  // Calculate user stats
+  const totalUsers = overview?.totalUsers || 0;
+  const activeUsers = userStatus?.active || 0;
+  const deletedUsers = overview?.deletedUsers || 0;
+
+  // Charts data
   const lineChartData = {
-    labels: Object.keys(registrationTrend),
-    datasets: [{
-      label: 'User Registrations',
-      data: Object.values(registrationTrend),
-      borderColor: 'rgba(75,192,192,1)',
-      fill: false,
-    }]
+    labels: registrationTrend.map((item) => item.month),
+    datasets: [{ label: 'User Registrations', data: registrationTrend.map((item) => item.registrations), borderColor: 'rgba(75,192,192,1)', fill: false }]
   };
 
-  // Active vs Inactive Users: Pie Chart Data
   const activeInactiveData = {
     labels: ['Active', 'Inactive'],
-    datasets: [{
-      data: [activeUsers, totalUsers - activeUsers],
-      backgroundColor: ['#36A2EB', '#FF6384'],
-    }]
+    datasets: [{ data: [activeUsers, totalUsers - activeUsers], backgroundColor: ['#36A2EB', '#FF6384'] }]
   };
 
-  // Users by Region: Bar Chart Data
-  const regionData = mockUsers.reduce((acc, user) => {
-    if (regionFilter === 'All' || user.region === regionFilter) {
-      acc[user.region] = (acc[user.region] || 0) + 1;
-    }
+  const filteredRegionData = regionDistribution.filter((item) => regionFilter === 'All' || item.region === regionFilter);
+  const regionData = filteredRegionData.reduce((acc, item) => {
+    acc[item.region] = item.count;
     return acc;
   }, {} as Record<string, number>);
 
   const barChartData = {
     labels: Object.keys(regionData),
-    datasets: [{
-      label: 'Users by Region',
-      data: Object.values(regionData),
-      backgroundColor: '#42A5F5',
-    }]
+    datasets: [{ label: 'Users by Region', data: Object.values(regionData), backgroundColor: '#42A5F5' }]
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-4xl font-semibold text-center text-gray-800 mb-8">Analytics Dashboard</h1>
-
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div className="card bg-white shadow-lg p-6 text-center">
-          <h3 className="text-xl font-semibold text-gray-600">Total Users</h3>
-          <p className="text-2xl font-bold">{totalUsers}</p>
+    <div>
+      {/* Navbar */}
+      <div className="px-6 navbar bg-base-100">
+        <div className="flex-1">
+          <span className="text-xl">Analytics Dashboard</span>
         </div>
-        <div className="card bg-white shadow-lg p-6 text-center">
-          <h3 className="text-xl font-semibold text-gray-600">Active Users</h3>
-          <p className="text-2xl font-bold">{activeUsers}</p>
+        <div className="flex items-center space-x-4">
+          <input
+            type="date"
+            className="input input-bordered input-primary"
+            value={dateRange.start}
+            onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+          />
+          <span className="text-base-800">to</span>
+          <input
+            type="date"
+            className="input input-bordered input-primary"
+            value={dateRange.end}
+            onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+          />
         </div>
-        <div className="card bg-white shadow-lg p-6 text-center">
-          <h3 className="text-xl font-semibold text-gray-600">Deleted Users</h3>
-          <p className="text-2xl font-bold">{deletedUsers}</p>
-        </div>
-      </div>
-
-      {/* Date Range Filter */}
-      <div className="flex items-center space-x-4 mb-8">
-        <input
-          type="date"
-          className="input input-bordered input-primary"
-          value={dateRange.start}
-          onChange={e => setDateRange({ ...dateRange, start: e.target.value })}
-        />
-        <span>to</span>
-        <input
-          type="date"
-          className="input input-bordered input-primary"
-          value={dateRange.end}
-          onChange={e => setDateRange({ ...dateRange, end: e.target.value })}
-        />
-      </div>
-
-      {/* Region Filter */}
-      <div className="mb-8">
         <select
-          className="select select-bordered select-primary w-full max-w-xs"
-          onChange={e => setRegionFilter(e.target.value)}
+          className="select select-bordered select-primary"
           value={regionFilter}
+          onChange={(e) => setRegionFilter(e.target.value)}
         >
           <option value="All">All Regions</option>
           <option value="North America">North America</option>
@@ -126,25 +120,44 @@ const AnalyticsDashboard: React.FC = () => {
         </select>
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Registration Trend (Line Chart) */}
-        <div className="card bg-white shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-600 mb-4">User Registration Trend</h3>
-          <Line data={lineChartData} />
+      {/* Overview and User Registration Trend - Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-6">
+        {/* Overview Cards */}
+        <div className="col-span-2 card bg-base-200 shadow-xl p-6">
+          <h3 className="text-xl font-semibold text-base-800 mb-4">Overview</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="card bg-base-100 shadow-xl p-6 text-center">
+              <h3 className="text-xl font-semibold text-base-800">Total Users</h3>
+              <p className="text-2xl font-bold">{totalUsers}</p>
+            </div>
+            <div className="card bg-base-100 shadow-xl p-6 text-center">
+              <h3 className="text-xl font-semibold text-base-800">Active Users</h3>
+              <p className="text-2xl font-bold">{activeUsers}</p>
+            </div>
+            <div className="card bg-base-100 shadow-xl p-6 text-center">
+              <h3 className="text-xl font-semibold text-base-800">Deleted Users</h3>
+              <p className="text-2xl font-bold">{deletedUsers}</p>
+            </div>
+          </div>
         </div>
 
-        {/* Active vs Inactive Users (Pie Chart) */}
-        <div className="card bg-white shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-600 mb-4">Active vs Inactive Users</h3>
-          <Pie data={activeInactiveData} />
+        {/* User Registration Trend */}
+        <div className="col-span-3 card bg-base-200 shadow-xl p-6">
+          <h3 className="text-xl font-semibold text-base-800 mb-4">User Registration Trend</h3>
+          <Line data={lineChartData} />
         </div>
       </div>
 
-      {/* Users by Region (Bar Chart) */}
-      <div className="card bg-white shadow-lg p-6 mt-8">
-        <h3 className="text-xl font-semibold text-gray-600 mb-4">Users by Region</h3>
-        <Bar data={barChartData} />
+      {/* Active vs Inactive Users and Users by Region - Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
+        <div className="col-span-2 card bg-base-200 shadow-xl p-6">
+          <h3 className="text-xl font-semibold text-base-800 mb-4">Users by Region</h3>
+          <Bar data={barChartData} />
+        </div>
+        <div className="col-span-1 card bg-base-200 shadow-xl p-6">
+          <h3 className="text-xl font-semibold text-base-800 mb-4">Active vs Inactive Users</h3>
+          <Pie data={activeInactiveData} />
+        </div>
       </div>
     </div>
   );

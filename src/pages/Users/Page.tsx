@@ -1,33 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AppDispatch, RootState } from '../../app/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserDetails, fetchUsers } from '../../features/Users/usersSlice';
 
 const Page = () => {
-  // State for the user data, search term, and pagination
-  const [users, setUsers] = useState([
-    { id: 1, name: "Cy Ganderton", email: "cy.ganderton@example.com" },
-    { id: 2, name: "Hart Hagerty", email: "hart.hagerty@example.com" },
-    { id: 3, name: "Brice Swyre", email: "brice.swyre@example.com" },
-    { id: 4, name: "Brianna Wyman", email: "brianna.wyman@example.com" },
-    { id: 5, name: "Kelley Schmidt", email: "kelley.schmidt@example.com" },
-    { id: 6, name: "Maxime Nowak", email: "maxime.nowak@example.com" },
-    { id: 7, name: "Hannah Stevens", email: "hannah.stevens@example.com" },
-    { id: 8, name: "Mason Taylor", email: "mason.taylor@example.com" },
-    { id: 9, name: "Walter Lee", email: "walter.lee@example.com" },
-    { id: 10, name: "Kimberly Harris", email: "kimberly.harris@example.com" },
-  ]);
-  
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterBy, setFilterBy] = useState('name');  // 'name' or 'email' filter
+  const [filterBy, setFilterBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
 
+  const dispatch: AppDispatch = useDispatch();
+  const { list, details, loading, error } = useSelector((state: RootState) => state.users);
+
   // Filter users based on search term and selected filter
-  const filteredUsers = users.filter(user => {
+  const filteredUsers = list.filter(user => {
     if (filterBy === 'name') {
       return user.name.toLowerCase().includes(searchTerm.toLowerCase());
     } else if (filterBy === 'email') {
       return user.email.toLowerCase().includes(searchTerm.toLowerCase());
     }
-    return true; // Return true if no filter is applied
+    return true;
   });
 
   // Pagination logic
@@ -39,53 +31,54 @@ const Page = () => {
   );
 
   // Change page
-  const changePage = (page) => {
+  const changePage = (page: number): void => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
-  // Handle user delete (for now, just log the user to delete)
-  const handleDelete = (userId) => {
-    setUsers(users.filter(user => user.id !== userId));
+  // Handle user delete
+  const handleDelete = (userId: number): void => {
+    dispatch(fetchUsers());  // Re-fetch the users after deletion or update state
   };
 
+  const handleUserClick = (userId: string) => {
+    dispatch(fetchUserDetails(userId));
+  };
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
-    <div className="flex flex-col">
-      <div className="navbar bg-base-300 rounded-box">
-        <label className="input input-bordered flex items-center gap-2">
-          <input
-            type="text"
-            className="grow"
-            placeholder={`Search by ${filterBy}`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            className="h-4 w-4 opacity-70"
-          >
-            <path
-              fillRule="evenodd"
-              d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </label>
-        
+    <div className="my-4 flex flex-col">
+      <div className="px-6 navbar bg-base-100">
+        <div className="flex-1">
+          <span className="text-xl">Users Dashboard</span>
+        </div>
+
         <select
-          className="select select-bordered"
+          className="select select-bordered mr-2"
           value={filterBy}
           onChange={(e) => setFilterBy(e.target.value)}
         >
           <option value="name">Name</option>
           <option value="email">Email</option>
         </select>
+
+        <div className="flex-none gap-2">
+          <div className="form-control">
+            <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} />
+          </div>
+        </div>
       </div>
 
-      <div className="overflow-x-auto flex-1">
+      <div className="mt-10 overflow-x-auto flex-1">
         <table className="table table-zebra">
           {/* Table Head */}
           <thead>
@@ -105,7 +98,7 @@ const Page = () => {
                 <td>
                   <button
                     className="btn btn-sm btn-info"
-                    onClick={() => alert(`View details for ${user.name}`)}
+                    onClick={() => handleUserClick(user.id.toString())}
                   >
                     View
                   </button>

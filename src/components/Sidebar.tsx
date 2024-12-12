@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
     }
 
     return (
-        <div className="h-screen col-start-1 col-end-2 flex flex-col justify-between bg-base-200 text-base-content p-6 shadow-lg">
+        <div className="h-screen box-border col-start-1 col-end-2 sticky flex flex-col justify-between bg-base-200 text-base-content py-6 shadow-lg">
             {/* User Greeting */}
             <div className="mb-6 text-center text-lg font-medium">
                 <p>{user?.name}</p>
@@ -49,7 +49,7 @@ const Sidebar: React.FC = () => {
                 {user && (
                     <button
                         onClick={handleLogout}
-                        className="btn btn-outline border-none btn-error w-full mt-4"
+                        className="ml-5 btn btn-outline border-none btn-error"
                         aria-label="Logout"
                     >
                         {/* Simple Logout Icon (SVG) */}
