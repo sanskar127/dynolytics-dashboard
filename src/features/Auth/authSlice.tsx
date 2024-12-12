@@ -1,76 +1,103 @@
-// src/features/auth/authSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-
-// Define types for the user and auth state
-interface User {
-  id: number;
-  username: string;
-  password: string;
+// Define the types for the request and response
+interface UserRequest {
+  uname: string
+  passwd: string
 }
 
+interface UserResponse {
+  name: string
+  uname: string
+  passwd: string
+}
+
+// Define the state structure
 interface AuthState {
-  user: User | null;
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
+  user: UserResponse | null
+  status: AuthStatus
+  error: string | null
 }
 
-// Thunk to handle login authentication
-export const login = createAsyncThunk<User, { username: string; password: string }>(
-  'auth/login',
-  async ({ username, password }) => {
-    const response = await fetch(`http://localhost:5000/users?username=${username}&password=${password}`);
-    const data: User[] = await response.json(); // Assume response is an array of users
+// Enum for status to improve type safety
+enum AuthStatus {
+  Idle = 'idle',
+  Loading = 'loading',
+  Succeeded = 'succeeded',
+  Failed = 'failed'
+}
 
-    if (data.length > 0) {
-      const user = data[0];
-      // Save the user data in localStorage
-      localStorage.setItem('user', JSON.stringify(user));
-      return user; // Return the user data
+// Function to load user from localStorage with error handling
+const loadUserFromLocalStorage = (): UserResponse | null => {
+  try {
+    const storedUser = localStorage.getItem('user')
+    return storedUser ? JSON.parse(storedUser) : null
+  } catch (e) {
+    console.error("Failed to parse user from localStorage", e)
+    return null
+  }
+}
+
+// Initial state with user loaded from localStorage
+const initialState: AuthState = {
+  user: loadUserFromLocalStorage(),
+  status: AuthStatus.Idle,
+  error: null
+}
+
+// Thunk for handling the login API request
+export const login = createAsyncThunk<UserResponse, UserRequest>(
+  'auth/login',
+  async ({ uname, passwd }) => {
+    // Perform the login request using fetch
+    const response = await fetch(`http://localhost:5000/auth?uname=${uname}&passwd=${passwd}`)
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+
+    const data: UserResponse = await response.json() // Assuming the response is a single user object
+
+    if (data.uname) {
+      // Save the user data to localStorage if login is successful
+      localStorage.setItem('user', JSON.stringify(data))
+      return data
     } else {
-      throw new Error('Invalid username or password');
+      throw new Error('Invalid username or password')
     }
   }
-);
+)
 
-// Get user from localStorage (if exists)
-const loadUserFromLocalStorage = (): User | null => {
-  const storedUser = localStorage.getItem('user');
-  return storedUser ? JSON.parse(storedUser) : null;
-};
-
-const initialState: AuthState = {
-  user: loadUserFromLocalStorage(), // Load the user from localStorage if available
-  status: 'idle',
-  error: null,
-};
-
+// Slice for authentication
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    // Action to log the user out and clear localStorage
     logout: (state) => {
-      state.user = null;
-      // Clear the user data from localStorage on logout
-      localStorage.removeItem('user');
-    },
+      state.user = null
+      localStorage.removeItem('user')
+    }
   },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
-        state.status = 'loading';
+        state.status = AuthStatus.Loading
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<User>) => {
-        state.status = 'succeeded';
-        state.user = action.payload;
+      .addCase(login.fulfilled, (state, action: PayloadAction<UserResponse>) => {
+        state.status = AuthStatus.Succeeded
+        state.user = action.payload
+        state.error = null // Clear any previous errors
       })
       .addCase(login.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Something went wrong';
-      });
-  },
-});
+        state.status = AuthStatus.Failed
+        state.error = action.error.message || 'Something went wrong'
+      })
+  }
+})
 
-export const { logout } = authSlice.actions;
+// Export the logout action
+export const { logout } = authSlice.actions
 
-export default authSlice.reducer;
+// Export the reducer as default
+export default authSlice.reducer

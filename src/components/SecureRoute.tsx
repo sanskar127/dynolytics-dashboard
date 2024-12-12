@@ -1,22 +1,20 @@
 import React from 'react';
+import { RootState } from '../app/store';
+import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom'
 
-// Define the type of props
 interface SecureRouteProps {
   path: string;
 }
 
 const SecureRoute: React.FC<SecureRouteProps> = ({ path }) => {
+  const { user } = useSelector((state: RootState) => state.auth)
 
-  const isAuthenticated = true
-
-  if (!isAuthenticated) {
-    // If not authenticated, redirect to the login page
-    return <Navigate to="/login" replace />
+  if (user) {
+    return <Navigate to={path} replace />
   }
-
-  // If authenticated, render the secure path
-  return <Navigate to={path} replace />
+  
+  return <Navigate to="/login" replace />
 };
 
 export default SecureRoute

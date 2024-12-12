@@ -1,23 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { RootState } from '../app/store'
+import { logout } from '../features/Auth/authSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
-interface SidebarProps {
-    user: string | null | undefined;
-    onLogout: () => void;
-}
 
-const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
+const Sidebar: React.FC = () => {
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const { user } = useSelector((state: RootState) => state.auth)
+
+    const handleLogout = () => {
+        dispatch(logout())
+        navigate('/')
+    }
+
     return (
         <div className="h-screen col-start-1 col-end-2 flex flex-col justify-between bg-base-200 text-base-content p-6 shadow-lg">
             {/* User Greeting */}
             <div className="mb-6 text-center text-lg font-medium">
-                <p>{user ? `${user}` : 'Guest'}</p>
+                <p>{user?.name}</p>
             </div>
 
             {/* Navigation Items */}
             <ul className="menu bg-base-200 rounded-box">
                 <li className="hover:bg-primary hover:text-white rounded-md">
-                    <Link to='/user' className="flex items-center space-x-2">
+                    <Link to='/users' className="flex items-center space-x-2">
                         {/* User Icon (SVG) */}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="w-5 h-5" viewBox="0 0 24 24">
                             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
@@ -40,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
             <div className="mt-auto">
                 {user && (
                     <button
-                        onClick={onLogout}
+                        onClick={handleLogout}
                         className="btn btn-outline border-none btn-error w-full mt-4"
                         aria-label="Logout"
                     >
@@ -61,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
                 )}
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Sidebar;
+export default Sidebar
