@@ -8,7 +8,7 @@ interface SecureRouteProps {
 
 const SecureRoute: React.FC<SecureRouteProps> = ({ path }) => {
 
-  const isAuthenticated = false
+  const isAuthenticated = true
 
   if (!isAuthenticated) {
     // If not authenticated, redirect to the login page

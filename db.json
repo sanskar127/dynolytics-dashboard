@@ -1,0 +1,149 @@
+{
+  "auth": {
+    "name": "Administrator",
+    "uname": "admin",
+    "passwd": "admin"
+  }, 
+  "users": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "status": "active",
+      "region": "North",
+      "registrationDate": "2023-01-15",
+      "posts": [
+        {
+          "id": "1",
+          "title": "My First Post",
+          "content": "This is the content of my first post.",
+          "createdAt": "2023-02-01",
+          "comments": [
+            {
+              "id": "1",
+              "userId": "2",
+              "comment": "Great post, John!",
+              "createdAt": "2023-02-02"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "status": "inactive",
+      "region": "South",
+      "registrationDate": "2023-02-10",
+      "posts": []
+    },
+    {
+      "id": "3",
+      "name": "Michael Johnson",
+      "email": "michael.johnson@example.com",
+      "status": "active",
+      "region": "East",
+      "registrationDate": "2023-03-05",
+      "posts": []
+    },
+    {
+      "id": "4",
+      "name": "Emma Williams",
+      "email": "emma.williams@example.com",
+      "status": "active",
+      "region": "West",
+      "registrationDate": "2023-03-20",
+      "posts": []
+    },
+    {
+      "id": "5",
+      "name": "Lucas Martinez",
+      "email": "lucas.martinez@example.com",
+      "status": "inactive",
+      "region": "South",
+      "registrationDate": "2024-04-15",
+      "posts": []
+    }
+  ],
+  "posts": [
+    {
+      "id": "1",
+      "userId": "1",
+      "title": "My First Post",
+      "content": "This is the content of my first post.",
+      "createdAt": "2023-02-01",
+      "comments": [
+        {
+          "id": "1",
+          "userId": "2",
+          "comment": "Great post, John!",
+          "createdAt": "2023-02-02"
+        }
+      ]
+    }
+  ],
+  "comments": [
+    {
+      "id": "1",
+      "postId": "1",
+      "userId": "2",
+      "comment": "Great post, John!",
+      "createdAt": "2023-02-02"
+    }
+  ],
+  "overview": {
+    "totalUsers": 1000,
+    "activeUsers": 600,
+    "inactiveUsers": 400,
+    "deletedUsers": 0
+  },
+  "registrationTrend": [
+    {
+      "month": "Jan",
+      "registrations": 200
+    },
+    {
+      "month": "Feb",
+      "registrations": 150
+    },
+    {
+      "month": "Mar",
+      "registrations": 180
+    },
+    {
+      "month": "Apr",
+      "registrations": 250
+    },
+    {
+      "month": "May",
+      "registrations": 220
+    },
+    {
+      "month": "Jun",
+      "registrations": 300
+    }
+  ],
+  "userStatus": {
+    "active": 600,
+    "inactive": 400
+  },
+  "regionDistribution": [
+    {
+      "region": "North",
+      "count": 250
+    },
+    {
+      "region": "South",
+      "count": 300
+    },
+    {
+      "region": "East",
+      "count": 200
+    },
+    {
+      "region": "West",
+      "count": 250
+    }
+  ]
+}

@@ -1,23 +1,25 @@
 import React from 'react'
-import { Route, BrowserRouter as Router, Routes, } from 'react-router-dom'
-import Login from "./components/Login"
-import Analytics from "./pages/Analytics/Page"
-import UserManagement from "./pages/UserManagement/Page"
-import SecureRoute from "./components/SecureRoute"
-import Navbar from "./components/Navbar"
+// import SecureRoute from './components/SecureRoute'
+import Sidebar from './components/Sidebar'
+import { Outlet } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from './app/store'
 
 const App: React.FC = () => {
 
+  const { user, status, error } = useSelector((state: RootState) => state.auth)
+  const dispatch = useDispatch()
+
+
   return (
-    <Router>
-      <Navbar show={false} />
-      <Routes>
-        <Route path="/" element={<SecureRoute path='/dashboard' />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<UserManagement />} />
-        <Route path="/analytics" element={<Analytics />} />
-      </Routes>
-    </Router>
+    <>
+      <div className='grid grid-cols-5'>
+        <Sidebar user="Admin" onLogout={() => { }} />
+        <div className='col-start-2 col-end-6'>
+          <Outlet />
+        </div>
+      </div>
+    </>
   )
 }
 
