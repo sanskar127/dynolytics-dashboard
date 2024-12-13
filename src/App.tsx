@@ -24,10 +24,9 @@ const App: React.FC = () => {
 
   return (
     <>
-      {/* Use grid-cols-[auto_1fr] with no gap between columns */}
-      <div className="grid grid-cols-[auto_1fr] gap-0 m-0 p-0">
+      <div className="grid grid-cols-[auto_1fr]">
         <Sidebar />
-        <div className="m-0 p-0">  {/* Ensure no margin/padding */}
+        <div className="m-4 p-4">
           <Outlet />
         </div>
       </div>

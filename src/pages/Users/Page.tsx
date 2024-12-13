@@ -1,5 +1,3 @@
-// Page.tsx
-
 import { useState } from 'react';
 import { AppDispatch, RootState } from '../../app/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,6 +8,8 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterBy, setFilterBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);  // State for modal visibility
+  const [, setSelectedUserId] = useState<string | null>(null); // To store the selected user ID
   const usersPerPage = 5;
 
   const dispatch: AppDispatch = useDispatch();
@@ -45,21 +45,30 @@ const Page = () => {
     dispatch(deleteUser(userId));  // Dispatch delete user action
   };
 
+  // Handle View button click - open modal and fetch user details
   const handleUserClick = (userId: string) => {
-    dispatch(fetchUserDetails(userId));
+    setSelectedUserId(userId);
+    dispatch(fetchUserDetails(userId));  // Fetch user details from API or store
+    setIsModalOpen(true);  // Open the modal
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedUserId(null);  // Reset the selected user ID
   };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="my-4 flex flex-col">
+    <div className="flex flex-col">
 
       <Navbar
         title='Users Dashboard'
         element1={
           <select
-            className="select select-bordered mr-2"
+            className="select mr-2"
             value={filterBy}
             onChange={(e) => setFilterBy(e.target.value)}
           >
@@ -71,7 +80,7 @@ const Page = () => {
         element2={
           <div className="flex-none gap-2">
             <div className="form-control">
-              <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto"
+              <input type="text" placeholder="Search" className="input w-24 md:w-auto"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
@@ -79,16 +88,10 @@ const Page = () => {
         }
       />
 
-
-
-
-
       <div className="mt-10 overflow-x-auto flex-1">
-        <table className="table table-zebra">
-          {/* Table Head */}
+        <table className="table">
           <thead>
             <tr>
-              <th></th>
               <th>Name</th>
               <th>Email</th>
               <th>Actions</th>
@@ -97,7 +100,6 @@ const Page = () => {
           <tbody>
             {usersToDisplay.map(user => (
               <tr key={user.id}>
-                <th>{user.id}</th>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>
@@ -120,22 +122,46 @@ const Page = () => {
         </table>
       </div>
 
-      {/* Pagination controls aligned at the bottom-center */}
-      <div className="flex justify-center mt-4 mb-4">
-        <button
-          className="btn join-item"
-          onClick={() => changePage(currentPage - 1)}
-        >
-          «
-        </button>
-        <button className="join-item btn">Page {currentPage}</button>
-        <button
-          className="btn join-item"
-          onClick={() => changePage(currentPage + 1)}
-        >
-          »
-        </button>
-      </div>
+      <footer>
+        <div className="flex justify-center mt-4 mb-4">
+          <button
+            className="btn join-item"
+            onClick={() => changePage(currentPage - 1)}
+          >
+            «
+          </button>
+          <button className="join-item btn">Page {currentPage}</button>
+          <button
+            className="btn join-item"
+            onClick={() => changePage(currentPage + 1)}
+          >
+            »
+          </button>
+        </div>
+      </footer>
+
+      {/* Modal */}
+      {isModalOpen && details && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="modal modal-open">
+            <div className="modal-box relative">
+              <h2 className="text-xl font-semibold">User Details</h2>
+              <div className="my-4">
+                <p><strong>Name: </strong> {details.name}</p>
+                <p><strong>Email: </strong> {details.email}</p>
+                <p><strong>Status: </strong> {details.status}</p>
+                <p><strong>Region: </strong> {details.region}</p>
+                <p><strong>Registration Date: </strong> {details.registrationDate}</p>
+              </div>
+              <div className="modal-action">
+                <button className="btn btn-primary" onClick={closeModal}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

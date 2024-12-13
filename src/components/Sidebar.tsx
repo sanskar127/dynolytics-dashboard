@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-64 box-border sticky top-0 left-0 flex flex-col justify-between bg-base-200 text-base-content py-6 shadow-lg">
+    <div className="hidden h-screen w-64 box-border sticky top-0 left-0 md:flex flex-col justify-between bg-base-200 text-base-content py-6 shadow-lg">
       {/* User Greeting */}
       <div className="mb-6 text-center text-lg font-medium">
         <p>{user?.name}</p>

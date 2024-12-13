@@ -1,78 +1,84 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Line, Pie, Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
-import Navbar from '../../components/Navbar';
-import 'chart.js/auto'; // Auto-register Chart.js components
+// pages/AnalyticsDashboard.tsx
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { AnalyticsState } from "../../types/types"
-
-// Register necessary Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
+import Navbar from '../../components/Navbar'
+import OverviewCard from '../../components/OverviewCard'
+import UserRegistrationTrend from '../../components/UserRegistrationTrend'
+import ActiveInactiveChart from '../../components/ActiveInactiveChart'
+import RegionChart from '../../components/RegionChart'
+import 'chart.js/auto' // Auto-register Chart.js components
 
 const AnalyticsDashboard: React.FC = () => {
-  const { overview, registrationTrend, userStatus, regionDistribution, loading, error } = useSelector((state: { analytics: AnalyticsState }) => state.analytics);
+  const { overview, registrationTrend, userStatus, regionDistribution, loading, error } = useSelector((state: { analytics: AnalyticsState }) => state.analytics)
 
-  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '2024-01-01', end: '2024-12-31' });
-  const [regionFilter, setRegionFilter] = useState('All');
-
-  
+  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '2024-01-01', end: '2024-12-31' })
+  const [regionFilter, setRegionFilter] = useState('All')
 
   // Calculate user stats
-  const totalUsers = overview?.totalUsers || 0;
-  const activeUsers = userStatus?.active || 0;
-  const deletedUsers = overview?.deletedUsers || 0;
+  const totalUsers = overview?.totalUsers || 0
+  const activeUsers = userStatus?.active || 0
+  const deletedUsers = overview?.deletedUsers || 0
 
   // Charts data
   const lineChartData = {
     labels: registrationTrend.map((item) => item.month),
     datasets: [{ label: 'User Registrations', data: registrationTrend.map((item) => item.registrations), borderColor: 'rgba(75,192,192,1)', fill: false }]
-  };
+  }
 
   const activeInactiveData = {
     labels: ['Active', 'Inactive'],
     datasets: [{ data: [activeUsers, totalUsers - activeUsers], backgroundColor: ['#36A2EB', '#FF6384'] }]
-  };
+  }
 
-  const filteredRegionData = regionDistribution.filter((item) => regionFilter === 'All' || item.region === regionFilter);
+  // Filter region data
+  const filteredRegionData = regionDistribution?.filter((item) => regionFilter === 'All' || item.region === regionFilter) || []
   const regionData = filteredRegionData.reduce((acc, item) => {
-    acc[item.region] = item.count;
-    return acc;
-  }, {} as Record<string, number>);
+    acc[item.region] = item.count
+    return acc
+  }, {} as Record<string, number>)
 
   const barChartData = {
     labels: Object.keys(regionData),
     datasets: [{ label: 'Users by Region', data: Object.values(regionData), backgroundColor: '#42A5F5' }]
-  };
+  }
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div>Loading...</div>
+  if (error) return <div>Error: {error}</div>
 
   return (
     <div>
       {/* Navbar */}
       <Navbar
-        title='Analytics Dashboard'
+        title="Analytics Dashboard"
         element1={
-          <div className="flex items-center space-x-4">
-            <input
-              type="date"
-              className="input input-bordered input-primary"
-              value={dateRange.start}
-              onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-            />
-            <span className="text-base-800">to</span>
-            <input
-              type="date"
-              className="input input-bordered input-primary"
-              value={dateRange.end}
-              onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-            />
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="btn btn-neutral m-1">Click</div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <li>
+                <span className="text-base-800">From: </span>
+                <input
+                  type="date"
+                  className="input"
+                  value={dateRange.end}
+                  onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+                />
+              </li>
+              <li>
+                <span className="text-base-800">to: </span>
+                <input
+                  type="date"
+                  className="input"
+                  value={dateRange.start}
+                  onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+                />
+              </li>
+            </ul>
           </div>
         }
-
         element2={
           <select
-            className="select select-bordered select-primary"
+            className="select"
             value={regionFilter}
             onChange={(e) => setRegionFilter(e.target.value)}
           >
@@ -85,47 +91,25 @@ const AnalyticsDashboard: React.FC = () => {
         }
       />
 
-      {/* Overview and User Registration Trend - Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-6">
-        {/* Overview Cards */}
-        <div className="col-span-2 card bg-base-200 shadow-xl p-6">
-          <h3 className="text-xl font-semibold text-base-800 mb-4">Overview</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="card bg-base-100 shadow-xl p-6 text-center">
-              <h3 className="text-xl font-semibold text-base-800">Total Users</h3>
-              <p className="text-2xl font-bold">{totalUsers}</p>
-            </div>
-            <div className="card bg-base-100 shadow-xl p-6 text-center">
-              <h3 className="text-xl font-semibold text-base-800">Active Users</h3>
-              <p className="text-2xl font-bold">{activeUsers}</p>
-            </div>
-            <div className="card bg-base-100 shadow-xl p-6 text-center">
-              <h3 className="text-xl font-semibold text-base-800">Deleted Users</h3>
-              <p className="text-2xl font-bold">{deletedUsers}</p>
-            </div>
-          </div>
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+        <div className="col-span-2 flex-1">
+          <OverviewCard total={totalUsers} active={activeUsers} deleted={deletedUsers} />
         </div>
 
-        {/* User Registration Trend */}
-        <div className="col-span-3 card bg-base-200 shadow-xl p-6">
-          <h3 className="text-xl font-semibold text-base-800 mb-4">User Registration Trend</h3>
-          <Line data={lineChartData} />
+        <div className="col-span-4">
+          <RegionChart data={barChartData} />
         </div>
-      </div>
 
-      {/* Active vs Inactive Users and Users by Region - Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
-        <div className="col-span-2 card bg-base-200 shadow-xl p-6">
-          <h3 className="text-xl font-semibold text-base-800 mb-4">Users by Region</h3>
-          <Bar data={barChartData} />
+        <div className="col-span-5 lg:col-span-4">
+          <UserRegistrationTrend data={lineChartData} />
         </div>
-        <div className="col-span-1 card bg-base-200 shadow-xl p-6">
-          <h3 className="text-xl font-semibold text-base-800 mb-4">Active vs Inactive Users</h3>
-          <Pie data={activeInactiveData} />
+
+        <div className="col-span-2">
+          <ActiveInactiveChart data={activeInactiveData} />
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AnalyticsDashboard;
+export default AnalyticsDashboard

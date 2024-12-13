@@ -1,0 +1,64 @@
+{
+  "users": [
+    { "id": "1", "name": "John Doe", "email": "john.doe@example.com", "status": "active", "region": "North", "registrationDate": "2023-01-15" },
+    { "id": "2", "name": "Jane Smith", "email": "jane.smith@example.com", "status": "inactive", "region": "South", "registrationDate": "2023-02-10" },
+    { "id": "3", "name": "Michael Johnson", "email": "michael.johnson@example.com", "status": "active", "region": "East", "registrationDate": "2023-03-05" },
+    { "id": "4", "name": "Emma Brown", "email": "emma.brown@example.com", "status": "active", "region": "West", "registrationDate": "2023-04-20" },
+    { "id": "5", "name": "Daniel White", "email": "daniel.white@example.com", "status": "inactive", "region": "North", "registrationDate": "2023-05-17" },
+    { "id": "6", "name": "Olivia Green", "email": "olivia.green@example.com", "status": "active", "region": "South", "registrationDate": "2023-06-05" },
+    { "id": "7", "name": "James Taylor", "email": "james.taylor@example.com", "status": "active", "region": "East", "registrationDate": "2023-07-12" },
+    { "id": "8", "name": "Sophia Harris", "email": "sophia.harris@example.com", "status": "inactive", "region": "West", "registrationDate": "2023-08-25" },
+    { "id": "9", "name": "Mason King", "email": "mason.king@example.com", "status": "active", "region": "North", "registrationDate": "2023-09-01" },
+    { "id": "10", "name": "Isabella Clark", "email": "isabella.clark@example.com", "status": "active", "region": "South", "registrationDate": "2023-10-03" },
+    { "id": "11", "name": "Ethan Lewis", "email": "ethan.lewis@example.com", "status": "inactive", "region": "East", "registrationDate": "2023-11-10" },
+    { "id": "12", "name": "Amelia Walker", "email": "amelia.walker@example.com", "status": "active", "region": "West", "registrationDate": "2023-12-15" },
+    { "id": "13", "name": "Lucas Young", "email": "lucas.young@example.com", "status": "active", "region": "North", "registrationDate": "2024-01-02" },
+    { "id": "14", "name": "Mia Allen", "email": "mia.allen@example.com", "status": "active", "region": "South", "registrationDate": "2024-02-14" },
+    { "id": "15", "name": "Liam Scott", "email": "liam.scott@example.com", "status": "inactive", "region": "East", "registrationDate": "2024-03-07" },
+    { "id": "16", "name": "Charlotte Adams", "email": "charlotte.adams@example.com", "status": "active", "region": "West", "registrationDate": "2024-04-10" },
+    { "id": "17", "name": "Benjamin Mitchell", "email": "benjamin.mitchell@example.com", "status": "active", "region": "North", "registrationDate": "2024-05-20" },
+    { "id": "18", "name": "Amelia Taylor", "email": "amelia.taylor@example.com", "status": "active", "region": "South", "registrationDate": "2024-06-25" },
+    { "id": "19", "name": "Elijah Rodriguez", "email": "elijah.rodriguez@example.com", "status": "inactive", "region": "East", "registrationDate": "2024-07-18" },
+    { "id": "20", "name": "Harper Perez", "email": "harper.perez@example.com", "status": "active", "region": "West", "registrationDate": "2024-08-10" },
+    { "id": "21", "name": "Alexander Carter", "email": "alexander.carter@example.com", "status": "active", "region": "North", "registrationDate": "2024-09-01" },
+    { "id": "22", "name": "Zoe Robinson", "email": "zoe.robinson@example.com", "status": "active", "region": "South", "registrationDate": "2024-10-15" },
+    { "id": "23", "name": "Henry Lewis", "email": "henry.lewis@example.com", "status": "active", "region": "East", "registrationDate": "2024-11-05" },
+    { "id": "24", "name": "Lily Harris", "email": "lily.harris@example.com", "status": "inactive", "region": "West", "registrationDate": "2024-12-01" },
+    { "id": "25", "name": "Jack Perez", "email": "jack.perez@example.com", "status": "active", "region": "North", "registrationDate": "2024-12-15" },
+    { "id": "26", "name": "Ella Johnson", "email": "ella.johnson@example.com", "status": "active", "region": "South", "registrationDate": "2025-01-01" },
+    { "id": "27", "name": "Sebastian Lee", "email": "sebastian.lee@example.com", "status": "active", "region": "East", "registrationDate": "2025-02-10" },
+    { "id": "28", "name": "Scarlett Clark", "email": "scarlett.clark@example.com", "status": "inactive", "region": "West", "registrationDate": "2025-03-20" },
+    { "id": "29", "name": "Owen Martinez", "email": "owen.martinez@example.com", "status": "active", "region": "North", "registrationDate": "2025-04-15" },
+    { "id": "30", "name": "Aria Gonzalez", "email": "aria.gonzalez@example.com", "status": "active", "region": "South", "registrationDate": "2025-05-03" }
+  ],
+  "overview": {
+    "totalUsers": 30,
+    "activeUsers": 24,
+    "deletedUsers": 0,
+    "inactiveUsers": 6
+  },
+  "registrationTrend": [
+    { "month": "Jan", "registrations": 95 },
+    { "month": "Feb", "registrations": 60 },
+    { "month": "Mar", "registrations": 130 },
+    { "month": "Apr", "registrations": 200 },
+    { "month": "May", "registrations": 85 },
+    { "month": "Jun", "registrations": 250 },
+    { "month": "Jul", "registrations": 175 },
+    { "month": "Aug", "registrations": 145 },
+    { "month": "Sep", "registrations": 110 },
+    { "month": "Oct", "registrations": 180 },
+    { "month": "Nov", "registrations": 220 },
+    { "month": "Dec", "registrations": 140 }
+  ],
+  "userStatus": {
+    "active": 24,
+    "inactive": 6
+  },
+  "regionDistribution": [
+    { "region": "North", "count": 8 },
+    { "region": "South", "count": 7 },
+    { "region": "East", "count": 7 },
+    { "region": "West", "count": 8 }
+  ]
+}
