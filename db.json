@@ -3,41 +3,8 @@
     "name": "Administrator",
     "uname": "admin",
     "passwd": "admin"
-  }, 
+  },
   "users": [
-    {
-      "id": "1",
-      "name": "John Doe",
-      "email": "john.doe@example.com",
-      "status": "active",
-      "region": "North",
-      "registrationDate": "2023-01-15",
-      "posts": [
-        {
-          "id": "1",
-          "title": "My First Post",
-          "content": "This is the content of my first post.",
-          "createdAt": "2023-02-01",
-          "comments": [
-            {
-              "id": "1",
-              "userId": "2",
-              "comment": "Great post, John!",
-              "createdAt": "2023-02-02"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "2",
-      "name": "Jane Smith",
-      "email": "jane.smith@example.com",
-      "status": "inactive",
-      "region": "South",
-      "registrationDate": "2023-02-10",
-      "posts": []
-    },
     {
       "id": "3",
       "name": "Michael Johnson",
@@ -45,15 +12,6 @@
       "status": "active",
       "region": "East",
       "registrationDate": "2023-03-05",
-      "posts": []
-    },
-    {
-      "id": "4",
-      "name": "Emma Williams",
-      "email": "emma.williams@example.com",
-      "status": "active",
-      "region": "West",
-      "registrationDate": "2023-03-20",
       "posts": []
     },
     {
@@ -69,7 +27,7 @@
   "posts": [
     {
       "id": "1",
-      "userId": "1",
+      "userId": null,
       "title": "My First Post",
       "content": "This is the content of my first post.",
       "createdAt": "2023-02-01",
@@ -87,7 +45,7 @@
     {
       "id": "1",
       "postId": "1",
-      "userId": "2",
+      "userId": null,
       "comment": "Great post, John!",
       "createdAt": "2023-02-02"
     }
@@ -101,27 +59,33 @@
   "registrationTrend": [
     {
       "month": "Jan",
-      "registrations": 200
+      "registrations": 200,
+      "id": "3406"
     },
     {
       "month": "Feb",
-      "registrations": 150
+      "registrations": 150,
+      "id": "3e9e"
     },
     {
       "month": "Mar",
-      "registrations": 180
+      "registrations": 180,
+      "id": "2131"
     },
     {
       "month": "Apr",
-      "registrations": 250
+      "registrations": 250,
+      "id": "ebed"
     },
     {
       "month": "May",
-      "registrations": 220
+      "registrations": 220,
+      "id": "f791"
     },
     {
       "month": "Jun",
-      "registrations": 300
+      "registrations": 300,
+      "id": "53a3"
     }
   ],
   "userStatus": {
@@ -131,19 +95,23 @@
   "regionDistribution": [
     {
       "region": "North",
-      "count": 250
+      "count": 250,
+      "id": "cc48"
     },
     {
       "region": "South",
-      "count": 300
+      "count": 300,
+      "id": "d668"
     },
     {
       "region": "East",
-      "count": 200
+      "count": 200,
+      "id": "d889"
     },
     {
       "region": "West",
-      "count": 250
+      "count": 250,
+      "id": "47f1"
     }
   ]
 }

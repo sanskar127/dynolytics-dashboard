@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+// Page.tsx
+
+import { useState } from 'react';
 import { AppDispatch, RootState } from '../../app/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserDetails, fetchUsers } from '../../features/Users/usersSlice';
+import { fetchUserDetails, deleteUser } from '../../features/Users/usersSlice';
+import Navbar from '../../components/Navbar';
 
 const Page = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,44 +42,46 @@ const Page = () => {
 
   // Handle user delete
   const handleDelete = (userId: number): void => {
-    dispatch(fetchUsers());  // Re-fetch the users after deletion or update state
+    dispatch(deleteUser(userId));  // Dispatch delete user action
   };
 
   const handleUserClick = (userId: string) => {
     dispatch(fetchUserDetails(userId));
   };
 
-  useEffect(() => {
-    dispatch(fetchUsers());
-  }, [dispatch]);
-
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="my-4 flex flex-col">
-      <div className="px-6 navbar bg-base-100">
-        <div className="flex-1">
-          <span className="text-xl">Users Dashboard</span>
-        </div>
 
-        <select
-          className="select select-bordered mr-2"
-          value={filterBy}
-          onChange={(e) => setFilterBy(e.target.value)}
-        >
-          <option value="name">Name</option>
-          <option value="email">Email</option>
-        </select>
+      <Navbar
+        title='Users Dashboard'
+        element1={
+          <select
+            className="select select-bordered mr-2"
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value)}
+          >
+            <option value="name">Name</option>
+            <option value="email">Email</option>
+          </select>
+        }
 
-        <div className="flex-none gap-2">
-          <div className="form-control">
-            <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)} />
+        element2={
+          <div className="flex-none gap-2">
+            <div className="form-control">
+              <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)} />
+            </div>
           </div>
-        </div>
-      </div>
+        }
+      />
+
+
+
+
 
       <div className="mt-10 overflow-x-auto flex-1">
         <table className="table table-zebra">

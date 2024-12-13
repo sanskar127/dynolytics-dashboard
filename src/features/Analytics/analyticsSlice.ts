@@ -1,36 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-// Define the types for the data we're fetching
-interface Overview {
-  totalUsers: number;
-  activeUsers: number;
-  inactiveUsers: number;
-  deletedUsers: number;
-}
-
-interface RegistrationTrend {
-  month: string;
-  registrations: number;
-}
-
-interface UserStatus {
-  active: number;
-  inactive: number;
-}
-
-interface RegionDistribution {
-  region: string;
-  count: number;
-}
-
-interface AnalyticsState {
-  overview: Overview | null;
-  registrationTrend: RegistrationTrend[];
-  userStatus: UserStatus | null;
-  regionDistribution: RegionDistribution[];
-  loading: boolean;
-  error: string | null;
-}
+import { AnalyticsState, Overview, RegionDistribution, RegistrationTrend, UserStatus } from "../../types/types"
 
 // Initial state
 const initialState: AnalyticsState = {

@@ -1,59 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '../../app/store';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Line, Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import Navbar from '../../components/Navbar';
 import 'chart.js/auto'; // Auto-register Chart.js components
+import { AnalyticsState } from "../../types/types"
 
 // Register necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
 
-// Import actions
-import { fetchOverview, fetchRegistrationTrend, fetchUserStatus, fetchRegionDistribution } from '../../features/Analytics/analyticsSlice';
-
-// Define the slice state types
-interface Overview {
-  totalUsers: number;
-  deletedUsers: number;
-}
-
-interface UserStatus {
-  active: number;
-}
-
-interface RegistrationTrendItem {
-  month: string;
-  registrations: number;
-}
-
-interface RegionDistributionItem {
-  region: string;
-  count: number;
-}
-
-interface AnalyticsState {
-  overview: Overview | null;
-  registrationTrend: RegistrationTrendItem[];
-  userStatus: UserStatus | null;
-  regionDistribution: RegionDistributionItem[];
-  loading: boolean;
-  error: string | null;
-}
-
 const AnalyticsDashboard: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const { overview, registrationTrend, userStatus, regionDistribution, loading, error } = useSelector((state: { analytics: AnalyticsState }) => state.analytics);
 
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '2024-01-01', end: '2024-12-31' });
   const [regionFilter, setRegionFilter] = useState('All');
 
-  // Dispatch fetch actions on component mount
-  useEffect(() => {
-    dispatch(fetchOverview());
-    dispatch(fetchRegistrationTrend());
-    dispatch(fetchUserStatus());
-    dispatch(fetchRegionDistribution());
-  }, [dispatch]);
+  
 
   // Calculate user stats
   const totalUsers = overview?.totalUsers || 0;
@@ -88,37 +50,40 @@ const AnalyticsDashboard: React.FC = () => {
   return (
     <div>
       {/* Navbar */}
-      <div className="px-6 navbar bg-base-100">
-        <div className="flex-1">
-          <span className="text-xl">Analytics Dashboard</span>
-        </div>
-        <div className="flex items-center space-x-4">
-          <input
-            type="date"
-            className="input input-bordered input-primary"
-            value={dateRange.start}
-            onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-          />
-          <span className="text-base-800">to</span>
-          <input
-            type="date"
-            className="input input-bordered input-primary"
-            value={dateRange.end}
-            onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-          />
-        </div>
-        <select
-          className="select select-bordered select-primary"
-          value={regionFilter}
-          onChange={(e) => setRegionFilter(e.target.value)}
-        >
-          <option value="All">All Regions</option>
-          <option value="North America">North America</option>
-          <option value="Europe">Europe</option>
-          <option value="Asia">Asia</option>
-          <option value="Africa">Africa</option>
-        </select>
-      </div>
+      <Navbar
+        title='Analytics Dashboard'
+        element1={
+          <div className="flex items-center space-x-4">
+            <input
+              type="date"
+              className="input input-bordered input-primary"
+              value={dateRange.start}
+              onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+            />
+            <span className="text-base-800">to</span>
+            <input
+              type="date"
+              className="input input-bordered input-primary"
+              value={dateRange.end}
+              onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+            />
+          </div>
+        }
+
+        element2={
+          <select
+            className="select select-bordered select-primary"
+            value={regionFilter}
+            onChange={(e) => setRegionFilter(e.target.value)}
+          >
+            <option value="All">All Regions</option>
+            <option value="North America">North America</option>
+            <option value="Europe">Europe</option>
+            <option value="Asia">Asia</option>
+            <option value="Africa">Africa</option>
+          </select>
+        }
+      />
 
       {/* Overview and User Registration Trend - Side by Side */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-6">

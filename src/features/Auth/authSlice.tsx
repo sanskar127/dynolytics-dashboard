@@ -1,31 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-
-// Define the types for the request and response
-interface UserRequest {
-  uname: string
-  passwd: string
-}
-
-interface UserResponse {
-  name: string
-  uname: string
-  passwd: string
-}
-
-// Define the state structure
-interface AuthState {
-  user: UserResponse | null
-  status: AuthStatus
-  error: string | null
-}
-
-// Enum for status to improve type safety
-enum AuthStatus {
-  Idle = 'idle',
-  Loading = 'loading',
-  Succeeded = 'succeeded',
-  Failed = 'failed'
-}
+import { AuthState, AuthStatus, UserRequest, UserResponse } from "../../types/types"
 
 // Function to load user from localStorage with error handling
 const loadUserFromLocalStorage = (): UserResponse | null => {
